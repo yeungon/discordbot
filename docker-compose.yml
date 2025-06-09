@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  discordbot:
+    build: .
+    container_name: discordbot
+    environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+    restart: unless-stopped
