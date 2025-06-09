@@ -6,4 +6,5 @@ services:
     container_name: discordbot
     environment:
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - SERVER_ID=${SERVER_ID}
     restart: unless-stopped

@@ -4,7 +4,7 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN go build -o bot .
+RUN go build -o bot ./cmd
 
 # Run stage
 FROM debian:bookworm-slim
