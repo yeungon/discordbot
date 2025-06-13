@@ -1,10 +1,18 @@
-version: "3.8"
-
 services:
   discordbot:
     build: .
     container_name: discordbot
+    env_file:
+      - .env
     environment:
-      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
-      - SERVER_ID=${SERVER_ID}
+      - PRODUCTION=TRUE
     restart: unless-stopped
+    networks:
+      - pg-network
+    volumes:
+      - bot_data:/app/data
+networks:
+  pg-network:
+    external: true # Only if you created it manually
+volumes:
+  bot_data:

@@ -1,9 +1,9 @@
-package main
+package handle
 
 import "github.com/bwmarrin/discordgo"
 
 var (
-	commands = []*discordgo.ApplicationCommand{
+	Commands = []*discordgo.ApplicationCommand{
 		{
 			Name:        "hello",
 			Description: "Replies with a personalized greeting.",

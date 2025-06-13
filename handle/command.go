@@ -13,34 +13,46 @@ func SlashCommandHandler(s *discordgo.Session, i *discordgo.InteractionCreate) {
 
 	switch i.ApplicationCommandData().Name {
 	case "hello":
-		options := i.ApplicationCommandData().Options
-		name := "bạn"
-		if len(options) > 0 {
-			name = options[0].StringValue()
-		}
-
-		fmt.Println(options)
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: fmt.Sprintf("Xin chào, %s! 👋", name),
-			},
-		})
+		handleHelloCommand(s, i)
 	case "ping":
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: "Pong slash!",
-			},
-		})
+		handlePingCommand(s, i)
 	case "pong":
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Content: "Ping slash!",
-			},
-		})
+		handlePongCommand(s, i)
 	default:
-		// Optional: handle unknown commands or ignore
+		// Optional: handle unknown commands
 	}
+}
+
+func handleHelloCommand(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	options := i.ApplicationCommandData().Options
+	name := "bạn"
+	if len(options) > 0 {
+		name = options[0].StringValue()
+	}
+
+	fmt.Println(options)
+	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: fmt.Sprintf("Xin chào, %s! 👋", name),
+		},
+	})
+}
+
+func handlePingCommand(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "test Pong slash!",
+		},
+	})
+}
+
+func handlePongCommand(s *discordgo.Session, i *discordgo.InteractionCreate) {
+	s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+		Type: discordgo.InteractionResponseChannelMessageWithSource,
+		Data: &discordgo.InteractionResponseData{
+			Content: "hello là Ping slash!",
+		},
+	})
 }
