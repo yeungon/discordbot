@@ -12,7 +12,7 @@ import (
 	"github.com/yeungon/discordbot/handle"
 )
 
-func load() string {
+func loadEnv() string {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -27,7 +27,7 @@ func main() {
 	if production == "TRUE" {
 		Token = os.Getenv("DISCORD_BOT_TOKEN")
 	} else {
-		Token = load()
+		Token = loadEnv()
 	}
 	dg, err := discordgo.New("Bot " + Token)
 	if err != nil {
@@ -37,6 +37,8 @@ func main() {
 
 	// Register the messageCreate func as a callback for MessageCreate events.
 	dg.AddHandler(handle.MessageCreate)
+	dg.AddHandler(handle.CheckStudent)
+	dg.AddHandler(handle.FindStudent)
 	dg.AddHandler(handle.SlashCommandHandler)
 
 	// Open a websocket connection to Discord and begin listening.
