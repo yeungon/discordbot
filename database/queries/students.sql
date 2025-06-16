@@ -28,6 +28,10 @@ SELECT * FROM students ORDER BY id LIMIT $1 OFFSET $2;
 -- name: SearchStudents :many
 SELECT * FROM students WHERE search_vector @@ plainto_tsquery('simple', $1) ORDER BY id;
 
+-- name: SearchStudentsByPhrase :many
+SELECT * FROM students
+WHERE search_vector @@ phraseto_tsquery('simple', $1) ORDER BY id;
+
 -- UPDATE
 -- name: UpdateStudent :exec
 UPDATE students

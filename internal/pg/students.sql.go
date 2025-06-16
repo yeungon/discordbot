@@ -309,6 +309,51 @@ func (q *Queries) SearchStudents(ctx context.Context, plaintoTsquery string) ([]
 	return items, nil
 }
 
+const searchStudentsByPhrase = `-- name: SearchStudentsByPhrase :many
+SELECT id, name, student_code, gender, dob, dob_format, class, class_code, ethnic, national_id, phone, email, province, address, notes, search_vector FROM students
+WHERE search_vector @@ phraseto_tsquery('simple', $1) ORDER BY id
+`
+
+func (q *Queries) SearchStudentsByPhrase(ctx context.Context, phrasetoTsquery string) ([]Student, error) {
+	rows, err := q.db.QueryContext(ctx, searchStudentsByPhrase, phrasetoTsquery)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Student
+	for rows.Next() {
+		var i Student
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.StudentCode,
+			&i.Gender,
+			&i.Dob,
+			&i.DobFormat,
+			&i.Class,
+			&i.ClassCode,
+			&i.Ethnic,
+			&i.NationalID,
+			&i.Phone,
+			&i.Email,
+			&i.Province,
+			&i.Address,
+			&i.Notes,
+			&i.SearchVector,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const searchStudentsFilteredPaginated = `-- name: SearchStudentsFilteredPaginated :many
 SELECT id, name, student_code, gender, dob, dob_format, class, class_code, ethnic, national_id, phone, email, province, address, notes, search_vector
 FROM students

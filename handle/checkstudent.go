@@ -55,12 +55,12 @@ func CheckStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session,
 			s.ChannelMessageSend(m.ChannelID, FormatStudentInfo(*studentData))
 
 			s.ChannelMessageSendComplex(m.ChannelID, &discordgo.MessageSend{
-				Content: "studentInfo",
+				Content: "",
 				Components: []discordgo.MessageComponent{
 					discordgo.ActionsRow{
 						Components: []discordgo.MessageComponent{
 							discordgo.Button{
-								Label:    "Xem điểm sinh viên",
+								Label:    "Xem điểm sinh viên " + *&studentData.StudentCode.String,
 								Style:    discordgo.PrimaryButton,
 								CustomID: "xem_diem_button_",
 							},
