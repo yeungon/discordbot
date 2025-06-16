@@ -53,6 +53,21 @@ func CheckStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session,
 				return
 			}
 			s.ChannelMessageSend(m.ChannelID, FormatStudentInfo(*studentData))
+
+			s.ChannelMessageSendComplex(m.ChannelID, &discordgo.MessageSend{
+				Content: "studentInfo",
+				Components: []discordgo.MessageComponent{
+					discordgo.ActionsRow{
+						Components: []discordgo.MessageComponent{
+							discordgo.Button{
+								Label:    "Xem điểm sinh viên",
+								Style:    discordgo.PrimaryButton,
+								CustomID: "xem_diem_button_",
+							},
+						},
+					},
+				},
+			})
 		}
 	}
 }
@@ -68,7 +83,6 @@ func CheckStudentModel(query *db.Queries, student_id string) (error, *db.Student
 		log.Print("Error when querying user list", err)
 		return err, nil
 	}
-	fmt.Println(&ListUser)
 	return nil, &ListUser
 }
 
@@ -81,19 +95,19 @@ func SafeString(ns sql.NullString) string {
 
 func FormatStudentInfo(s db.Student) string {
 	return fmt.Sprintf(
-		`📄 **Thông tin sinh viên**
-**👤 Họ và tên**: %s
-**🎓 Mã sinh viên**: %s
-**🧑 Giới tính**: %s
-**🎂 Ngày sinh**: %s (định dạng: %s)
-**🏫 Lớp**: %s (%s)
-**🌍 Dân tộc**: %s
-**🆔 Số CMND/CCCD**: %s
-**📞 Số điện thoại**: %s
-**✉️ Email**: %s
-**🏠 Tỉnh/Thành phố**: %s
-**📍 Địa chỉ**: %s
-**📝 Ghi chú**: %s`,
+		`**Thông tin sinh viên**
+**Họ và tên**: %s
+**Mã sinh viên**: %s
+**Giới tính**: %s
+**Ngày sinh**: %s (định dạng: %s)
+**Lớp**: %s (%s)
+**Dân tộc**: %s
+**CMND/CCCD**: %s
+**Điện thoại**: %s
+**Email**: %s
+**Tỉnh/Thành phố**: %s
+**Địa chỉ**: %s
+**Ghi chú**: %s`,
 		SafeString(s.Name),
 		SafeString(s.StudentCode),
 		SafeString(s.Gender),

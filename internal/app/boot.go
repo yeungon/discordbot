@@ -31,6 +31,9 @@ func Boot() {
 
 	Handles(dg, appConfig)
 
+	// Enable necessary intents
+	dg.Identify.Intents = discordgo.IntentsGuildMessages | discordgo.IntentsGuilds
+
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()
 	if err != nil {
