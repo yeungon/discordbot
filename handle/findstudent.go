@@ -5,30 +5,33 @@ import (
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/yeungon/discordbot/internal/config"
 )
 
-func FindStudent(s *discordgo.Session, m *discordgo.MessageCreate) {
-	// Ignore messages from the bot itself
-	if m.Author.ID == s.State.User.ID {
-		return
-	}
+func FindStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session, m *discordgo.MessageCreate) {
+	return func(s *discordgo.Session, m *discordgo.MessageCreate) {
+		// Ignore messages from the bot itself
+		if m.Author.ID == s.State.User.ID {
+			return
+		}
 
-	content := strings.TrimSpace(m.Content)
-	lower := strings.ToLower(content)
-	parts := strings.Fields(lower)
-	if len(parts) == 0 || len(parts) > 7 {
-		return
-	}
+		content := strings.TrimSpace(m.Content)
+		lower := strings.ToLower(content)
+		parts := strings.Fields(lower)
+		if len(parts) == 0 || len(parts) > 7 {
+			return
+		}
 
-	command := parts[0]
-	arg := ""
-	if len(parts) > 1 {
-		arg = strings.Join(parts[1:], " ")
-	}
+		command := parts[0]
+		arg := ""
+		if len(parts) > 1 {
+			arg = strings.Join(parts[1:], " ")
+		}
 
-	fmt.Printf("command %s, arg: %s\n", command, arg)
+		fmt.Printf("command %s, arg: %s\n", command, arg)
 
-	if command == "find" {
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("You are running find command, argument is:  %v", arg))
+		if command == "find" {
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("You are running find command, argument is:  %v", arg))
+		}
 	}
 }

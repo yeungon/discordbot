@@ -3,12 +3,12 @@ package app
 import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/yeungon/discordbot/handle"
+	"github.com/yeungon/discordbot/internal/config"
 )
 
-func Handles(dg *discordgo.Session) {
-	// Register the messageCreate func as a callback for MessageCreate events.
-	dg.AddHandler(handle.MessageCreate)
-	dg.AddHandler(handle.CheckStudent)
-	dg.AddHandler(handle.FindStudent)
+func Handles(dg *discordgo.Session, appConfig *config.AppConfig) {
+	dg.AddHandler(handle.MessageCreateHandler(appConfig))
+	dg.AddHandler(handle.CheckStudentHandler(appConfig))
+	dg.AddHandler(handle.FindStudentHandler(appConfig))
 	dg.AddHandler(handle.SlashCommandHandler)
 }

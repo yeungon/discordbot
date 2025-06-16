@@ -9,6 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/yeungon/discordbot/handle"
 	"github.com/yeungon/discordbot/internal/config"
+	db "github.com/yeungon/discordbot/internal/pg"
 )
 
 func Boot() {
@@ -18,8 +19,17 @@ func Boot() {
 		return
 	}
 
-	DatabaseConnect()
-	Handles(dg)
+	dbConn := DatabaseConnect()
+	defer dbConn.Close()
+
+	// ---------------setting config for the App------------
+	appConfig := config.NewApp(true, true)
+	appConfig.Query = db.New(dbConn)
+	appConfig.Debug = true
+
+	// ---------------setting config for the App------------
+
+	Handles(dg, appConfig)
 
 	// Open a websocket connection to Discord and begin listening.
 	err = dg.Open()

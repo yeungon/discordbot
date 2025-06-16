@@ -144,6 +144,34 @@ func (q *Queries) GetStudentByName(ctx context.Context, name sql.NullString) (St
 	return i, err
 }
 
+const getStudentByStudentCode = `-- name: GetStudentByStudentCode :one
+SELECT id, name, student_code, gender, dob, dob_format, class, class_code, ethnic, national_id, phone, email, province, address, notes, search_vector FROM students WHERE student_code = $1
+`
+
+func (q *Queries) GetStudentByStudentCode(ctx context.Context, studentCode sql.NullString) (Student, error) {
+	row := q.db.QueryRowContext(ctx, getStudentByStudentCode, studentCode)
+	var i Student
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.StudentCode,
+		&i.Gender,
+		&i.Dob,
+		&i.DobFormat,
+		&i.Class,
+		&i.ClassCode,
+		&i.Ethnic,
+		&i.NationalID,
+		&i.Phone,
+		&i.Email,
+		&i.Province,
+		&i.Address,
+		&i.Notes,
+		&i.SearchVector,
+	)
+	return i, err
+}
+
 const listStudents = `-- name: ListStudents :many
 SELECT id, name, student_code, gender, dob, dob_format, class, class_code, ethnic, national_id, phone, email, province, address, notes, search_vector FROM students ORDER BY id
 `

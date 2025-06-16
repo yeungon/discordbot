@@ -13,6 +13,9 @@ INSERT INTO students (
 -- name: GetStudentByID :one
 SELECT * FROM students WHERE id = $1;
 
+-- name: GetStudentByStudentCode :one
+SELECT * FROM students WHERE student_code = $1;
+
 -- name: GetStudentByName :one
 SELECT * FROM students WHERE name = $1;
 

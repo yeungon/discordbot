@@ -8,12 +8,11 @@ import (
 	"github.com/yeungon/discordbot/internal/config"
 )
 
-func DatabaseConnect() {
+func DatabaseConnect() *sql.DB {
 	dbConn, err := sql.Open("postgres", config.PostgreSql_URL())
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
-
-	defer dbConn.Close()
-
+	//fmt.Println(dbConn)
+	return dbConn
 }
