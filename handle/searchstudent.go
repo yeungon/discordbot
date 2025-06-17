@@ -33,8 +33,8 @@ func SearchStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session
 			arg = strings.Join(parts[1:], " ")
 		}
 
-		if command == "search" {
-			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("You are running find command, argument is:  %v", arg))
+		if command == "search" || command == "s" {
+			//s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("You are running find command, argument is:  %v", arg))
 			students, err := searchStudentsByKeyword(appConfig.Query, arg)
 			if err != nil {
 				if errors.Is(err, sql.ErrNoRows) {
@@ -49,6 +49,7 @@ func SearchStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session
 
 			err = sendStudentSearchResults(s, m.ChannelID, students)
 			if err != nil {
+				fmt.Println("err", err)
 				s.ChannelMessageSend(m.ChannelID, "❌ Failed to send results.")
 			}
 
@@ -67,57 +68,68 @@ func searchStudentsByKeyword(query *db.Queries, keyword_input string) ([]db.Stud
 	}
 	return students, nil
 }
-
 func sendStudentSearchResults(s *discordgo.Session, channelID string, students []db.Student) error {
 	if len(students) == 0 {
 		_, err := s.ChannelMessageSend(channelID, "❌ No students found.")
 		return err
 	}
 
-	const maxStudents = 100
-	var message strings.Builder
-	message.WriteString("**🔍 Search Results:**\n")
+	const maxStudents = 60
+	const chunkSize = 5
 
-	for i, student := range students {
-		if i >= maxStudents {
-			message.WriteString("\n...and more.")
-			break
+	if len(students) > maxStudents {
+		students = students[:maxStudents]
+	}
+
+	for i := 0; i < len(students); i += chunkSize {
+		end := i + chunkSize
+		if end > len(students) {
+			end = len(students)
 		}
 
-		message.WriteString(fmt.Sprintf(
-			"**%d. %s** (%s / %s)\n"+
-				"👤 Code: `%s`, Gender: %s, Ethnic: %s\n"+
-				"🎂 DOB: %s\n"+
-				"🆔 ID: %s\n"+
-				"📞 Phone: %s\n"+
-				"📧 Email: %s\n"+
-				"📍 Province: %s\n"+
-				"🏠 Address: %s\n"+
-				"📝 Notes: %s\n\n",
-			i+1,
-			safeString(student.Name),
-			safeString(student.Class),
-			safeString(student.ClassCode),
-			safeString(student.StudentCode),
-			safeString(student.Gender),
-			safeString(student.Ethnic),
-			safeString(student.DobFormat),
-			safeString(student.NationalID),
-			safeString(student.Phone),
-			safeString(student.Email),
-			safeString(student.Province),
-			safeString(student.Address),
-			safeString(student.Notes),
-		))
+		var message strings.Builder
+		message.WriteString(fmt.Sprintf("**🔍 Kết quả tìm kiếm (từ %d đến %d):**\n\n", i+1, end))
+
+		for j, student := range students[i:end] {
+			message.WriteString(fmt.Sprintf(
+				"**%d. %s** (%s / %s)\n"+
+					"👤 Code: `%s`, Gender: %s, Ethnic: %s\n"+
+					"🎂 DOB: %s\n"+
+					"🆔 ID: %s\n"+
+					"📞 Phone: %s\n"+
+					"📧 Email: %s\n"+
+					"📍 Province: %s\n"+
+					"🏠 Address: %s\n"+
+					"📝 Notes: %s\n\n",
+				i+j+1,
+				safeString(student.Name),
+				safeString(student.Class),
+				safeString(student.ClassCode),
+				safeString(student.StudentCode),
+				safeString(student.Gender),
+				safeString(student.Ethnic),
+				safeString(student.DobFormat),
+				safeString(student.NationalID),
+				safeString(student.Phone),
+				safeString(student.Email),
+				safeString(student.Province),
+				safeString(student.Address),
+				safeString(student.Notes),
+			))
+		}
+
+		content := message.String()
+		if len(content) > 2000 {
+			content = content[:1990] + "\n...🔻 Message truncated due to Discord limit."
+		}
+
+		_, err := s.ChannelMessageSend(channelID, content)
+		if err != nil {
+			return err
+		}
 	}
 
-	content := message.String()
-	if len(content) > 2000 {
-		content = content[:1990] + "\n...🔻 Message truncated due to Discord limit."
-	}
-
-	_, err := s.ChannelMessageSend(channelID, content)
-	return err
+	return nil
 }
 
 func safeString(ns sql.NullString) string {

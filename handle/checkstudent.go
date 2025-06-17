@@ -33,12 +33,12 @@ func CheckStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session,
 			arg = parts[1]
 		}
 
-		if len(parts[1]) != 10 {
-			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("❌ Mã sinh viên không chính xác:  %v \n.✅ Mã sinh viên có 10 kí tự !", arg))
-			return
-		}
-
 		if command == "check" {
+			if len(parts[1]) != 10 {
+				s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("❌ Mã sinh viên không chính xác:  %v \n.✅ Mã sinh viên có 10 kí tự !", arg))
+				return
+			}
+
 			student_id_uppercase := strings.ToUpper(arg)
 			err, studentData := CheckStudentModel(appConfig.Query, student_id_uppercase)
 
