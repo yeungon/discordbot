@@ -13,13 +13,18 @@ import (
 )
 
 func Boot() {
-	dg, err := discordgo.New("Bot " + config.Token())
+
+	//---------------Run config first------------
+	config.New()
+	cfg := config.Get()
+
+	dg, err := discordgo.New("Bot " + cfg.Token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
 
-	dbConn := DatabaseConnect()
+	dbConn := DatabaseConnect(cfg.PostgresURL)
 	defer dbConn.Close()
 
 	//---------------Load env config------------

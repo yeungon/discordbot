@@ -5,14 +5,12 @@ import (
 	"log"
 
 	_ "github.com/lib/pq"
-	"github.com/yeungon/discordbot/internal/config"
 )
 
-func DatabaseConnect() *sql.DB {
-	dbConn, err := sql.Open("postgres", config.PostgreSql_URL())
+func DatabaseConnect(postgres_url string) *sql.DB {
+	dbConn, err := sql.Open("postgres", postgres_url)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
-	//fmt.Println(dbConn)
 	return dbConn
 }

@@ -68,6 +68,7 @@ func searchStudentsByKeyword(query *db.Queries, keyword_input string) ([]db.Stud
 	}
 	return students, nil
 }
+
 func sendStudentSearchResults(s *discordgo.Session, channelID string, students []db.Student) error {
 	if len(students) == 0 {
 		_, err := s.ChannelMessageSend(channelID, "❌ No students found.")

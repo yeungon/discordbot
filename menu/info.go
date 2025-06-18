@@ -115,6 +115,14 @@ func InfoInteractionHandler(s *discordgo.Session, i *discordgo.InteractionCreate
 					Content: "📘 **Quy định làm tiểu luận: **.\n" + dieukien_tl,
 				},
 			})
+		case "info_matkhau_wifi":
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "Trường: dhsph19572010\n Khoa: TU16051996",
+				},
+			})
+
 		}
 
 	}

@@ -11,8 +11,8 @@ import (
 func GenerateHash() string {
 	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
 	time.Local = loc
-	prefix := config.Get().SECRET_FIRST
-	suffix := config.Get().SECRET_SECOND
+	prefix := config.Get().SecretFirst
+	suffix := config.Get().SecretSecond
 	currentTime := time.Now().In(loc)
 	dateString := currentTime.Format("212006") // dmyyyy format
 	input := prefix + dateString + suffix

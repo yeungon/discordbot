@@ -44,8 +44,8 @@ func GetStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session, m
 	}
 }
 func StudentCheckFetch(s *discordgo.Session, channelID string, studentID string) error {
-	baseurl := config.Get().SPH_URL_ENDPOINT
-	key := generateHash()
+	baseurl := config.Get().SphURLEndpoint
+	key := GenerateHash()
 	endpoint := fmt.Sprintf("%s?key=%s&id=%s", baseurl, key, studentID)
 
 	data, err := fetchData(endpoint)
@@ -197,11 +197,11 @@ func fetchData(url string) (*ResponseData, error) {
 	return &data, nil
 }
 
-func generateHash() string {
+func GenerateHash() string {
 	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
 	time.Local = loc
-	prefix := config.Get().SECRET_FIRST
-	suffix := config.Get().SECRET_SECOND
+	prefix := config.Get().SecretFirst
+	suffix := config.Get().SecretSecond
 	currentTime := time.Now().In(loc)
 	dateString := currentTime.Format("212006") // dmyyyy format
 	input := prefix + dateString + suffix
