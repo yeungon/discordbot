@@ -12,9 +12,7 @@ func Handles(dg *discordgo.Session, appConfig *config.AppConfig) {
 	dg.AddHandler(handle.CheckStudentHandler(appConfig))
 	dg.AddHandler(handle.SearchStudentHandler(appConfig))
 	dg.AddHandler(handle.GetStudentHandler(appConfig))
-	dg.AddHandler(menu.MessageButtonCreate)
 	dg.AddHandler(menu.InfoMenuCreate)
 	dg.AddHandler(menu.InfoInteractionHandler)
-	dg.AddHandler(menu.InteractionHandler)
 	dg.AddHandler(handle.SlashCommandHandler)
 }

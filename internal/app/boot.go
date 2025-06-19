@@ -14,16 +14,16 @@ import (
 
 func Boot() {
 
-	//---------------Run config first------------
+	//---------------Run config first to get the environment variables------------
 	config.New()
 	cfg := config.Get()
-
 	dg, err := discordgo.New("Bot " + cfg.Token)
 	if err != nil {
 		fmt.Println("error creating Discord session,", err)
 		return
 	}
 
+	//---------------Connect to database------------
 	dbConn := DatabaseConnect(cfg.PostgresURL)
 	defer dbConn.Close()
 

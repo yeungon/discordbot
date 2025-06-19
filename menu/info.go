@@ -7,7 +7,7 @@ func InfoMenuCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if m.Content == "info" || m.Content == "Info" {
+	if m.Content == "info" || m.Content == "Info" || m.Content == "menu" || m.Content == "Menu" || m.Content == "help" || m.Content == "Help" {
 		s.ChannelMessageSendComplex(m.ChannelID, &discordgo.MessageSend{
 			Content: "Các tác vụ hiện có của bot:\n",
 			Components: []discordgo.MessageComponent{
@@ -97,15 +97,21 @@ func InfoInteractionHandler(s *discordgo.Session, i *discordgo.InteractionCreate
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseUpdateMessage,
 				Data: &discordgo.InteractionResponseData{
-					Content:    "📘 Vui lòng chọn học kỳ để xem điểm:",
-					Components: []discordgo.MessageComponent{semesterMenu},
+					Content: "📘 Vui lòng chọn học kỳ để xem điểm:",
 				},
 			})
 		case "xem_tkb":
 			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
-					Content: "📅 Bạn đã chọn **Xem thời khóa biểu**! \n " + longText,
+					Content: "📅 Bạn đã chọn **Xem thời khóa biểu**! \n ",
+				},
+			})
+		case "info_quydinh_lam_kt":
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "📘 **Quy định làm tiểu luận: **.\n" + dieukien_kl,
 				},
 			})
 		case "info_quydinh_lam_tl":

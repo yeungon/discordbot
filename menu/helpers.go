@@ -32,4 +32,23 @@ Quy định chi tiết tại: https://tieuhoc.org/vanban/quydinh/quy_dinh_lam_kh
 
 
 `
+
+	dieukien_kl = `
+	Điều kiện để sinh viên được đăng ký làm Khóa luận:
+      ⠀⋆˚✿˖°⋆˚✿˖°⋆˚✿˖°
+a. Để được nhận làm KL, sinh viên cần hội đủ các điều kiện sau đây:
+
+a-1. Tổng số tín chỉ tích lũy đạt tối thiểu 75% khối lượng kiến thức tích lũy/khối lượng chương trình đào tạo của ngành học (xếp hạng SV năm thứ tư) và điểm trung bình chung tích lũy phải đạt từ 2,80 trở lên. (trong chương trình đào tạo có tính số lượng TC của các HP ngoại ngữ không chuyên)
+
+a-2. Đã thực hiện ít nhất 1 TL có kết quả đạt từ 8,0 điểm trở lên.
+
+a-3 . Đã tích luỹ một HP chuyên môn có từ 2 TC trở lên liên quan đến chuyên ngành mà SV đăng ký đề tài KL và đạt kết quả từ 8,5 điểm trở lên.
+
+a-4. Số HP còn nợ hoặc học lại trong các học kỳ trước đó không quá 02 và không vượt quá tổng số 5 TC.
+
+b. Sinh viên làm đề tài NCKH độc lập và đã nghiệm thu được ưu tiên chọn giao thực hiện KL.
+
+c. Mỗi Khoa xét duyệt số lượng SV được làm KL theo ngành học và không vượt quá 50% tổng số SV của khóa học thuộc ngành xét.
+
+	`
 )

@@ -30,6 +30,7 @@ var (
 func New() {
 	once.Do(func() {
 		var PostgresURLDynamic string
+		// the variable ${PRODUCTION} will be set to TRUE inside docker-compose.yml, false by default (set in .env)
 		if os.Getenv("PRODUCTION") != "TRUE" {
 			err := godotenv.Load(".env")
 			if err != nil {
