@@ -1,6 +1,9 @@
 package menu
 
-import "github.com/bwmarrin/discordgo"
+import (
+	"github.com/bwmarrin/discordgo"
+	"github.com/yeungon/discordbot/internal/config"
+)
 
 func InfoMenuCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
@@ -126,6 +129,16 @@ func InfoInteractionHandler(s *discordgo.Session, i *discordgo.InteractionCreate
 				Type: discordgo.InteractionResponseChannelMessageWithSource,
 				Data: &discordgo.InteractionResponseData{
 					Content: "Trường: dhsph19572010\n Khoa: TU16051996",
+				},
+			})
+		case "info_quydinh_ngoaingu":
+			cfg := config.Get()
+			ngoaingu := cfg.QUYDINH_NGOAINGU
+			image_url_ngoaingu := `https://res.cloudinary.com/yeungon/image/upload/v1750318009/static/ngoaingu.png`
+			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
+				Type: discordgo.InteractionResponseChannelMessageWithSource,
+				Data: &discordgo.InteractionResponseData{
+					Content: "Quy định về Ngoại ngữ, các chứng chỉ tương đương: \n" + ngoaingu + "\n" + image_url_ngoaingu,
 				},
 			})
 

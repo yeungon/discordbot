@@ -9,17 +9,18 @@ import (
 )
 
 type Env struct {
-	Token          string
-	AdminID        string
-	Passcode       string
-	PostgresURL    string
-	SphUsername    string
-	SphPassword    string
-	StudentList    string
-	SphURLEndpoint string
-	SecretFirst    string
-	SecretSecond   string
-	KhoaluanURL    string
+	Token            string
+	AdminID          string
+	Passcode         string
+	PostgresURL      string
+	SphUsername      string
+	SphPassword      string
+	StudentList      string
+	SphURLEndpoint   string
+	SecretFirst      string
+	SecretSecond     string
+	KhoaluanURL      string
+	QUYDINH_NGOAINGU string
 }
 
 var (
@@ -42,17 +43,18 @@ func New() {
 		}
 
 		env = &Env{
-			Token:          os.Getenv("DISCORD_BOT_TOKEN"),
-			AdminID:        os.Getenv("ADMIN_ID"),
-			Passcode:       os.Getenv("PASSCODE"),
-			PostgresURL:    PostgresURLDynamic,
-			SphUsername:    os.Getenv("SPH_USERNAME"),
-			SphPassword:    os.Getenv("SPH_PASSWORD"),
-			StudentList:    os.Getenv("STUDENT_LIST"),
-			SphURLEndpoint: os.Getenv("SPH_URL_ENDPOINT"),
-			SecretFirst:    os.Getenv("SECRET_FIRST"),
-			SecretSecond:   os.Getenv("SECRET_SECOND"),
-			KhoaluanURL:    os.Getenv("KHOALUAN_URL"),
+			Token:            os.Getenv("DISCORD_BOT_TOKEN"),
+			AdminID:          os.Getenv("ADMIN_ID"),
+			Passcode:         os.Getenv("PASSCODE"),
+			PostgresURL:      PostgresURLDynamic,
+			SphUsername:      os.Getenv("SPH_USERNAME"),
+			SphPassword:      os.Getenv("SPH_PASSWORD"),
+			StudentList:      os.Getenv("STUDENT_LIST"),
+			SphURLEndpoint:   os.Getenv("SPH_URL_ENDPOINT"),
+			SecretFirst:      os.Getenv("SECRET_FIRST"),
+			SecretSecond:     os.Getenv("SECRET_SECOND"),
+			KhoaluanURL:      os.Getenv("KHOALUAN_URL"),
+			QUYDINH_NGOAINGU: os.Getenv("QUYDINH_NGOAINGU"),
 		}
 	})
 }

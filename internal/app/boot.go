@@ -27,9 +27,6 @@ func Boot() {
 	dbConn := DatabaseConnect(cfg.PostgresURL)
 	defer dbConn.Close()
 
-	//---------------Load env config------------
-	config.New()
-
 	// ---------------setting config for the App------------
 	appConfig := config.NewApp(true, true)
 	appConfig.Query = db.New(dbConn)
