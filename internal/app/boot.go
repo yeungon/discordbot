@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,6 +19,8 @@ func Boot() {
 	logging.Log()
 	// When shutting down the application, ensure the log is closed properly
 	defer logging.CloseLog()
+
+	slog.Info("🟢 Bot is starting...")
 
 	//---------------Run config first to get the environment variables------------
 	config.New()

@@ -10,6 +10,7 @@ services:
     networks:
       - pg-network
     volumes:
+      - ./logs:/app/logs
       - bot_data:/app/data
     dns:
       - 8.8.8.8

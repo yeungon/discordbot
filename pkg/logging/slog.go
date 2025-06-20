@@ -4,6 +4,7 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"path/filepath"
 )
 
 var logFile *os.File
@@ -11,7 +12,13 @@ var logFile *os.File
 // Log sets up the global logger with a JSON handler.
 func Log() {
 	var err error
-	logFile, err = os.OpenFile("discordbot.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	const logPath = "/app/logs/discordbot.json"
+	// Ensure the logs/ directory exists
+	if err := os.MkdirAll(filepath.Dir(logPath), 0755); err != nil {
+		log.Fatalf("Failed to create logs directory: %v", err)
+	}
+
+	logFile, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatalf("Failed to open log file: %v", err)
 	}
