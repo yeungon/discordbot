@@ -1,19 +1,58 @@
 package handle
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/yeungon/discordbot/internal/config"
+	"github.com/yeungon/discordbot/pkg/helpers"
 )
+
+type ResponseData struct {
+	Info json.RawMessage `json:"info"`
+	Diem []DiemData      `json:"diem"`
+}
+
+type StudentInfo struct {
+	FMasv  string `json:"f_masv"`
+	FHoten string `json:"f_hoten"`
+	FLop   string `json:"f_lop"`
+	FPhone string `json:"f_phone"`
+}
+
+type DiemData struct {
+	HK      string `json:"HK"`
+	MAMH    string `json:"MAMH"`
+	DIEM    string `json:"DIEM"`
+	DIEMQT  string `json:"DIEMQT"`
+	DIEMTHI string `json:"DIEMTHI"`
+	DIEMTL  string `json:"DIEMTL"`
+	TenNH   string `json:"tennh"`
+	DVHT    string `json:"dvht"`
+}
+
+// type ResponseData struct {
+// 	Info struct {
+// 		FMasv  string `json:"f_masv"`
+// 		FHoten string `json:"f_hoten"`
+// 		FLop   string `json:"f_lop"`
+// 		FPhone string `json:"f_phone"`
+// 	} `json:"info"`
+// 	Diem []struct {
+// 		Hk      string `json:"HK"`
+// 		Mamh    string `json:"MAMH"`
+// 		Diem    string `json:"DIEM"`
+// 		Diemqt  string `json:"DIEMQT"`
+// 		Diemthi string `json:"DIEMTHI"`
+// 		Diemtl  string `json:"DIEMTL"`
+// 		Tennh   string `json:"tennh"`
+// 		Dvht    string `json:"dvht"`
+// 	} `json:"diem"`
+// }
 
 func GetStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session, m *discordgo.MessageCreate) {
 	return func(s *discordgo.Session, m *discordgo.MessageCreate) {
@@ -43,29 +82,36 @@ func GetStudentHandler(appConfig *config.AppConfig) func(s *discordgo.Session, m
 
 	}
 }
+
+func blankIfEmpty(s string) string {
+	if s == "" {
+		return "(chưa có)"
+	}
+	return s
+}
+
 func StudentCheckFetch(s *discordgo.Session, channelID string, studentID string) error {
 	baseurl := config.Get().SphURLEndpoint
-	key := GenerateHash()
+	key := helpers.GenerateHash()
 	endpoint := fmt.Sprintf("%s?key=%s&id=%s", baseurl, key, studentID)
+	student_info, diem, err := fetchData(endpoint)
 
-	data, err := fetchData(endpoint)
 	if err != nil {
 		log.Printf("❌ Error fetching data: %v", err)
 		s.ChannelMessageSend(channelID, fmt.Sprintf("❌ Có lỗi khi fetch dữ liệu: %v", err))
 		return nil
 	}
 
-	// 🧑‍🎓 Thông tin sinh viên
 	studentInfo := fmt.Sprintf(
 		"📄 **Thông tin sinh viên**\n"+
 			"• 🆔 Mã số: `%s`\n"+
 			"• 👤 Họ và tên: **%s**\n"+
 			"• 🏫 Lớp: `%s`\n"+
 			"• 📞 SĐT: `%s`\n",
-		data.Info.FMasv,
-		data.Info.FHoten,
-		data.Info.FLop,
-		data.Info.FPhone,
+		blankIfEmpty(student_info.FMasv),
+		blankIfEmpty(student_info.FHoten),
+		blankIfEmpty(student_info.FLop),
+		blankIfEmpty(student_info.FPhone),
 	)
 
 	if _, err := s.ChannelMessageSend(channelID, studentInfo); err != nil {
@@ -74,12 +120,12 @@ func StudentCheckFetch(s *discordgo.Session, channelID string, studentID string)
 
 	// 📘 Các môn có điểm tiểu luận
 	var hasTL strings.Builder
-	for _, subject := range data.Diem {
-		if strings.TrimSpace(subject.Diemtl) != "" {
+	for _, subject := range diem {
+		if strings.TrimSpace(subject.DIEMTL) != "" {
 			hasTL.WriteString(fmt.Sprintf("• `%s` **%s** — Điểm TL: `%s`\n",
-				subject.Mamh,
-				subject.Tennh,
-				subject.Diemtl,
+				subject.MAMH,
+				subject.TenNH,
+				subject.DIEMTL,
 			))
 		}
 	}
@@ -97,26 +143,26 @@ func StudentCheckFetch(s *discordgo.Session, channelID string, studentID string)
 	currentMsg.WriteString("📊 **Kết quả học tập**\n\n")
 
 	lastSemester := ""
-	for _, diem := range data.Diem {
+	for _, diem := range diem {
 		// Normalize scores
-		qt := formatScore(diem.Diemqt, "_")
-		thi := formatScore(diem.Diemthi, "_")
-		diemFinal := formatScore(diem.Diem, "_")
+		qt := formatScore(diem.DIEMQT, "_")
+		thi := formatScore(diem.DIEMTHI, "_")
+		diemFinal := formatScore(diem.DIEM, "_")
 
 		// Add semester header only if new
 		var semesterHeader string
-		if diem.Hk != lastSemester {
-			semesterHeader = fmt.Sprintf("📘 **Học kỳ %s**\n", diem.Hk)
-			lastSemester = diem.Hk
+		if diem.HK != lastSemester {
+			semesterHeader = fmt.Sprintf("📘 **Học kỳ %s**\n", diem.HK)
+			lastSemester = diem.HK
 		}
 
 		entry := fmt.Sprintf(
 			"%s• Môn: **%s** (`%s`)\n"+
 				"  • ĐVHT: `%s`, Điểm: `%s`, QT: `%s`, Thi: `%s`\n\n",
 			semesterHeader,
-			diem.Tennh,
-			diem.Mamh,
-			diem.Dvht,
+			diem.TenNH,
+			diem.MAMH,
+			diem.DVHT,
 			diemFinal,
 			qt,
 			thi,
@@ -151,60 +197,28 @@ func formatScore(val string, fallback string) string {
 	return val
 }
 
-type ResponseData struct {
-	Info struct {
-		FMasv  string `json:"f_masv"`
-		FHoten string `json:"f_hoten"`
-		FLop   string `json:"f_lop"`
-		FPhone string `json:"f_phone"`
-	} `json:"info"`
-	Diem []struct {
-		Hk      string `json:"HK"`
-		Mamh    string `json:"MAMH"`
-		Diem    string `json:"DIEM"`
-		Diemqt  string `json:"DIEMQT"`
-		Diemthi string `json:"DIEMTHI"`
-		Diemtl  string `json:"DIEMTL"`
-		Tennh   string `json:"tennh"`
-		Dvht    string `json:"dvht"`
-	} `json:"diem"`
-}
-
-func fetchData(url string) (*ResponseData, error) {
-	resp, err := http.Get(url)
+func fetchData(endpoint string) (*StudentInfo, []DiemData, error) {
+	resp, err := http.Get(endpoint)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch data: %w", err)
+		return nil, nil, fmt.Errorf("http error: %w", err)
 	}
 	defer resp.Body.Close()
 
-	// Check if the status code is 200 OK
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	var raw ResponseData
+	if err := json.NewDecoder(resp.Body).Decode(&raw); err != nil {
+		return nil, nil, fmt.Errorf("failed to parse JSON: %w", err)
 	}
 
-	// Read the response body
-	body, err := io.ReadAll(resp.Body)
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %w", err)
+	// Handle the "info" field which might be an object or false
+	var info StudentInfo
+	if string(raw.Info) != "false" {
+		if err := json.Unmarshal(raw.Info, &info); err != nil {
+			return nil, nil, fmt.Errorf("failed to parse student info: %w", err)
+		}
+	} else {
+		// leave info fields empty
+		info = StudentInfo{}
 	}
 
-	// Parse the JSON response
-	var data ResponseData
-	if err := json.Unmarshal(body, &data); err != nil {
-		return nil, fmt.Errorf("failed to parse JSON: %w", err)
-	}
-	return &data, nil
-}
-
-func GenerateHash() string {
-	loc, _ := time.LoadLocation("Asia/Ho_Chi_Minh")
-	time.Local = loc
-	prefix := config.Get().SecretFirst
-	suffix := config.Get().SecretSecond
-	currentTime := time.Now().In(loc)
-	dateString := currentTime.Format("212006") // dmyyyy format
-	input := prefix + dateString + suffix
-	hash := md5.Sum([]byte(input))
-	return hex.EncodeToString(hash[:])
+	return &info, raw.Diem, nil
 }

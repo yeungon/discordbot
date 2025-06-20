@@ -10,9 +10,14 @@ import (
 	"github.com/yeungon/discordbot/handle"
 	"github.com/yeungon/discordbot/internal/config"
 	db "github.com/yeungon/discordbot/internal/pg"
+	"github.com/yeungon/discordbot/pkg/logging"
 )
 
 func Boot() {
+
+	logging.Log()
+	// When shutting down the application, ensure the log is closed properly
+	defer logging.CloseLog()
 
 	//---------------Run config first to get the environment variables------------
 	config.New()

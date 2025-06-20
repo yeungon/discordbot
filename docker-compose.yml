@@ -11,6 +11,9 @@ services:
       - pg-network
     volumes:
       - bot_data:/app/data
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
 networks:
   pg-network:
     external: true # Only if you created it manually

@@ -1,4 +1,4 @@
-.PHONY: up down run dev
+.PHONY: up down run dev update pull
 
 up:
 	docker-compose up --build
@@ -8,3 +8,7 @@ run:
 	docker-compose up -d --build
 dev:
 	go run ./cmd
+pull:
+	sudo git pull
+
+update: pull run
